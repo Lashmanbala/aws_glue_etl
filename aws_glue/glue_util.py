@@ -60,19 +60,19 @@ def create_glue_job(job_name, iam_role, script_location, temp_dir):
         Timeout=60,  # Timeout in minutes
         MaxRetries=1,  # Retry number # Meaning totally 2 retries: retry-0 and retry-1.
     )
-    time.sleep(5) # wait untill job created
+    time.sleep(5) # wait untill the job is created
 
     return response
 
-def run_glue_job(job_name, database_name, table_name, bucket_name, folder_name):
+def run_glue_job(job_name, src_bucket_name, src_folder_name, tgt_bucket_name, tgt_folder_name):
     glue_client = boto3.client('glue')
 
     res = glue_client.start_job_run(JobName=job_name,
                                        Arguments={                # Setting up env variables
-                                     '--DATABASE_NAME': f'{database_name}',
-                                    '--TABLE_NAME': f'{table_name}',
-                                    '--TGT_BUCKET_NAME':  f'{bucket_name}',
-                                    '--TGT_FOLDER_NAME': F'{folder_name}'
+                                     '--SRC_BUCKET_NAME': f'{src_bucket_name}',
+                                    '--SRC_FOLDER_NAME': f'{src_folder_name}',
+                                    '--TGT_BUCKET_NAME':  f'{tgt_bucket_name}',
+                                    '--TGT_FOLDER_NAME': F'{tgt_folder_name}'
                                     })
 
     return res
