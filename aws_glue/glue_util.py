@@ -104,3 +104,25 @@ def create_on_demand_trigger(trigger_name, workflow_name, job_name, job_argument
 
     time.sleep(5)
     return response
+
+def create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name):
+    glue_client = boto3.client('glue')
+
+    response = glue_client.create_trigger(
+                                Name=trigger_name,
+                                WorkflowName=workflow_name,
+                                Type='CONDITIONAL',
+                                Predicate={
+                                    'Conditions': [{
+                                        'LogicalOperator': 'EQUALS',
+                                        'JobName': job_name,
+                                        'State': 'SUCCEEDED'
+                                    },]
+                                },
+                                Actions=[{
+                                    'CrawlerName': crawler_name
+                                },]
+                            )
+    
+    time.sleep(5)
+    return response

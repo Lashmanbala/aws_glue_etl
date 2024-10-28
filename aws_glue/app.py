@@ -1,5 +1,5 @@
 from iam_util import create_iam_policy, create_iam_role
-from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger
+from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger,create_conditional_trigger
 from athena_util import query_execution, get_query_results
 import dotenv
 
@@ -80,5 +80,11 @@ job_arguments = {
     '--TGT_FOLDER_NAME': 'cleaned'
 }
 
-create_trigger_res = create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments)
-print(create_trigger_res)
+# create_trigger_res = create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments)
+# print(create_trigger_res)
+
+trigger_name = 'parquet_crawler_trigger'
+crawler_name = 'gha_parquet_crawler'
+
+create_trigger_response = create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name)
+print(create_trigger_response)
