@@ -73,5 +73,12 @@ bucket_name = 'github-activity-bucket'
 trigger_name = 'glue_job_trigger'
 job_name = 'gha_glue_job'
 workflow_name = 'gha_workflow'
-create_trigger_res = create_on_demand_trigger(trigger_name, job_name, workflow_name)
+job_arguments = {
+    '--SRC_BUCKET_NAME': 'github-activity-bucket',
+    '--SRC_FOLDER_NAME': 'landing',
+    '--TGT_BUCKET_NAME': 'github-activity-bucket',
+    '--TGT_FOLDER_NAME': 'cleaned'
+}
+
+create_trigger_res = create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments)
 print(create_trigger_res)

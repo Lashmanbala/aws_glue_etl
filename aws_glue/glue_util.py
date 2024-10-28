@@ -89,18 +89,18 @@ def create_workflow(workflow_name):
     time.sleep(5)
     return response
 
-def create_on_demand_trigger(trigger_name, job_name, workflow_name):
+def create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments):
     glue_client = boto3.client('glue')
 
-
     response = glue_client.create_trigger(
-        Name=trigger_name,
-        Type='ON_DEMAND',
-        Actions=[{
-            'JobName': job_name
-        }],
-        WorkflowName=workflow_name
-    )
+                                Name=trigger_name,
+                                WorkflowName = workflow_name,
+                                Type='ON_DEMAND',
+                                Actions=[{
+                                    'JobName': job_name,
+                                    'Arguments': job_arguments  # Passing job arguments here
+                                }]
+                                )
 
     time.sleep(5)
     return response
