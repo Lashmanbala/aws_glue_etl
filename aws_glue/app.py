@@ -1,5 +1,5 @@
 from iam_util import create_iam_policy, create_iam_role
-from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger,create_conditional_trigger
+from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger,create_conditional_trigger, start_workflow
 from athena_util import query_execution, get_query_results
 import dotenv
 
@@ -25,10 +25,10 @@ bucket_name = 'github-activity-bucket'
 # start_res = start_glue_crawler(crawler_NAME)
 # print(start_res)
 
-# job_name = 'g-etl-job'
-# role_ARN = 'arn:aws:iam::872515260721:role/service-role/AWSGlueServiceRole-GHactivity'
-# script_location = f's3://{bucket_name}/scripts/glue_script.py'  # S3 path for the Glue script
-# temp_dir = f's3://{bucket_name}/temp/'  # Temporary directory for Glue
+job_name = 'gha_glue_job'
+role_ARN = 'arn:aws:iam::872515260721:role/service-role/AWSGlueServiceRole-GHactivity'
+script_location = f's3://{bucket_name}/scripts/glue_script.py'  # S3 path for the Glue script
+temp_dir = f's3://{bucket_name}/temp/'  # Temporary directory for Glue
 
 # res = create_glue_job(job_name, role_ARN, script_location, temp_dir)
 # print(res)
@@ -86,5 +86,8 @@ job_arguments = {
 trigger_name = 'parquet_crawler_trigger'
 crawler_name = 'gha_parquet_crawler'
 
-create_trigger_response = create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name)
-print(create_trigger_response)
+# create_trigger_response = create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name)
+# print(create_trigger_response)
+
+workflow_res = start_workflow(workflow_name)
+print(workflow_res)

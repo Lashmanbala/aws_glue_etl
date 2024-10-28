@@ -114,7 +114,7 @@ def create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_na
                                 Type='CONDITIONAL',
                                 Predicate={
                                     'Conditions': [{
-                                        'LogicalOperator': 'EQUALS',
+                                        'LogicalOperator': 'EQUALS',   # mandatory
                                         'JobName': job_name,
                                         'State': 'SUCCEEDED'
                                     },]
@@ -125,4 +125,12 @@ def create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_na
                             )
     
     time.sleep(5)
+    return response
+
+def start_workflow(workflow_name):
+    glue_client = boto3.client('glue')
+
+    response = glue_client.start_workflow_run(
+                                            Name=workflow_name
+                                        )
     return response
