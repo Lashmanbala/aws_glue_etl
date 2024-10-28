@@ -1,5 +1,5 @@
 from iam_util import create_iam_policy, create_iam_role
-from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow
+from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger
 from athena_util import query_execution, get_query_results
 import dotenv
 
@@ -65,7 +65,13 @@ bucket_name = 'github-activity-bucket'
 # res = query_result['ResultSet']['Rows'][1]['Data'][0]['VarCharValue']
 # print(f'Total n.of records: {res}')
 
-workflow_name = 'gha_workflow'
+# workflow_name = 'gha_workflow'
 
-create_workflow_res = create_workflow(workflow_name)
-print(create_workflow_res)
+# create_workflow_res = create_workflow(workflow_name)
+# print(create_workflow_res)
+
+trigger_name = 'glue_job_trigger'
+job_name = 'gha_glue_job'
+workflow_name = 'gha_workflow'
+create_trigger_res = create_on_demand_trigger(trigger_name, job_name, workflow_name)
+print(create_trigger_res)
