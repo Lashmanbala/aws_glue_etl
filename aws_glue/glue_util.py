@@ -76,3 +76,15 @@ def run_glue_job(job_name, src_bucket_name, src_folder_name, tgt_bucket_name, tg
                                     })
 
     return res
+
+def create_workflow(workflow_name):
+    glue_client = boto3.client('glue')
+
+    response = glue_client.create_workflow(
+        Name=workflow_name,
+        Description='A workflow with a Glue job followed by a Glue crawler',
+        DefaultRunProperties={}
+    )
+
+    time.sleep(5)
+    return response
