@@ -47,7 +47,7 @@ def create_glue_job(job_name, iam_role, script_location, temp_dir):
         GlueVersion='4.0',  # Optional: Glue version
         # MaxCapacity=max_capacity,  # Specifies the number of DPUs to allocate 
         # Need not to set max capacity if n.of workers and worker type is set
-        NumberOfWorkers=4,
+        NumberOfWorkers=5,
         WorkerType='Standard',
         DefaultArguments={
             '--TempDir': temp_dir,
@@ -121,7 +121,8 @@ def create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_na
                                 },
                                 Actions=[{
                                     'CrawlerName': crawler_name
-                                },]
+                                },],
+                                StartOnCreation=True     # start the trigger once its created (Conditional & scheduled triggers should be started manually to be triggerd)
                             )
     
     time.sleep(5)
