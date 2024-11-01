@@ -1,93 +1,76 @@
 from iam_util import create_iam_policy, create_iam_role
 from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, run_glue_job, create_workflow, create_on_demand_trigger,create_conditional_trigger, start_workflow
-from athena_util import query_execution, get_query_results
 import dotenv
 
-dotenv.load_dotenv()
+def main():
+    bucket_name = 'github-activity-bucket'
 
-bucket_name = 'github-activity-bucket'
+    policy_ARN = create_iam_policy(bucket_name)
 
-# policy_ARN = create_iam_policy(bucket_name)
+    res = create_iam_role(policy_ARN)
+    role_ARN = res['Role']['Arn']
+    print(res)
 
-# res = create_iam_role(policy_ARN)
-# role_ARN = res['Role']['Arn']
-# print(res)
+    crawler_NAME = 'gha_crawler'
+    s3_path = f's3://{bucket_name}/landing/'
+    db_name = 'gha_database'
+    prefix = 'gha_' 
 
-# crawler_NAME = 'gha_crawler'
-# role_ARN = 'arn:aws:iam::872515260721:role/service-role/AWSGlueServiceRole-GHactivity'
-# s3_path = f's3://{bucket_name}/landing/'
-# db_name = 'gha_database'
-# prefix = 'gha_' 
+    create_crawler_res = create_glue_crawler(crawler_NAME, role_ARN, db_name, s3_path, prefix)
+    print(create_crawler_res)
 
-# res = create_glue_crawler(crawler_NAME, role_ARN, db_name, s3_path, prefix)
-# print(res)
+    job_name = 'gha_glue_job3'
+    script_location = f's3://{bucket_name}/scripts/glue_script.py'  # S3 path for the Glue script
+    temp_dir = f's3://{bucket_name}/temp/'  # Temporary directory for Glue
 
-# start_res = start_glue_crawler(crawler_NAME)
-# print(start_res)
+    res = create_glue_job(job_name, role_ARN, script_location, temp_dir)
+    print('Job created')
+    print(res)
 
-job_name = 'gha_glue_job'
-role_ARN = 'arn:aws:iam::872515260721:role/service-role/AWSGlueServiceRole-GHactivity'
-script_location = f's3://{bucket_name}/scripts/glue_script.py'  # S3 path for the Glue script
-temp_dir = f's3://{bucket_name}/temp/'  # Temporary directory for Glue
+    crawler_NAME = 'gha_parquet_crawler'
+    s3_path = f's3://{bucket_name}/cleaned_parquet/'
+    db_name = 'gha_database'
+    prefix = 'gha_' 
 
-# res = create_glue_job(job_name, role_ARN, script_location, temp_dir)
-# print(res)
+    res = create_glue_crawler(crawler_NAME, role_ARN, db_name, s3_path, prefix)
+    print(res)
 
-# src_bucket_name = bucket_name
-# src_folder_name = 'landing'
-# tgt_bucket_name = bucket_name
-# tgt_folder_name = 'cleaned'
+    workflow_name = 'gha_workflow'
 
-# run_response = run_glue_job(job_name, src_bucket_name, src_folder_name, tgt_bucket_name, tgt_folder_name)
-# print(run_response)
+    create_workflow_res = create_workflow(workflow_name)
+    print('Workflow created')
+    print(create_workflow_res)
 
-# crawler_NAME = 'gha_parquet_crawler'
-# s3_path = f's3://{bucket_name}/cleaned_parquet/'
-# db_name = 'gha_database'
-# prefix = 'gha_' 
+    trigger_name = 'glue_job_trigger2'
+    job_name = 'gha_glue_job3'
+    workflow_name = 'gha_workflow'
+    job_arguments = {
+        '--SRC_BUCKET_NAME': 'github-activity-bucket',
+        '--SRC_FOLDER_NAME': 'landing',
+        '--TGT_BUCKET_NAME': 'github-activity-bucket',
+        '--TGT_FOLDER_NAME': 'cleaned'
+    }
 
-# res = create_glue_crawler(crawler_NAME, role_ARN, db_name, s3_path, prefix)
-# print(res)
+    create_trigger_res = create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments)
+    print('On-demand trigger created')
+    print(create_trigger_res)
 
-# start_res = start_glue_crawler(crawler_NAME)
-# print(start_res)
+    trigger_name = 'parquet_crawler_trigger2'
+    crawler_name = 'gha_parquet_crawler'
 
-# query = 'SELECT COUNT(*) FROM gha_cleaned'
-# s3_output_location = f's3://{bucket_name}/athena_query_results/'
+    create_trigger_response = create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name)
+    print('conditional trigger created')
+    print(create_trigger_response)
 
-# query_reponse = query_execution(db_name, query, s3_output_location)
-# print(query_reponse)
+    workflow_res = start_workflow(workflow_name)
+    print('Workflow started')
+    print(workflow_res)
 
-# execution_id = query_reponse['QueryExecutionId']
+if __name__ == "__main__":
 
-# query_result = get_query_results(execution_id)
-# print(f'Total n.of records: {query_result}')
-# res = query_result['ResultSet']['Rows'][1]['Data'][0]['VarCharValue']
-# print(f'Total n.of records: {res}')
+    dotenv.load_dotenv()
 
-# workflow_name = 'gha_workflow'
+    main()
 
-# create_workflow_res = create_workflow(workflow_name)
-# print(create_workflow_res)
 
-trigger_name = 'glue_job_trigger'
-job_name = 'gha_glue_job'
-workflow_name = 'gha_workflow'
-job_arguments = {
-    '--SRC_BUCKET_NAME': 'github-activity-bucket',
-    '--SRC_FOLDER_NAME': 'landing',
-    '--TGT_BUCKET_NAME': 'github-activity-bucket',
-    '--TGT_FOLDER_NAME': 'cleaned'
-}
 
-# create_trigger_res = create_on_demand_trigger(trigger_name, workflow_name, job_name, job_arguments)
-# print(create_trigger_res)
-
-trigger_name = 'parquet_crawler_trigger'
-crawler_name = 'gha_parquet_crawler'
-
-# create_trigger_response = create_conditional_trigger(trigger_name, workflow_name, job_name, crawler_name)
-# print(create_trigger_response)
-
-workflow_res = start_workflow(workflow_name)
-print(workflow_res)
