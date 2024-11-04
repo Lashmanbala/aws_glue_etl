@@ -2,7 +2,13 @@
 
 ## Overview
 - In this project, we extract the data from the web archive using aws lambda and store it in s3. 
-- Using glue, the raw data is processed(cleaned, partitioned, converted to parquet) and stored it in s3.
+- A glue workflow is created with:
+  
+   1. On-demand trigger which triggers the glue job.
+  
+   2. The glue etl job reads the raw data from s3, cleans the data, partiton the data and writes into s3 in parquet format.
+   
+   3. On the completion of the glue job , a conditional-trigger will trigger a glue crawler to crawl the cleaned parquet files which will create the tables to be queried.
 - Using athena the cleand data is being queried.
 
 ## Architecture
@@ -15,56 +21,41 @@
 ## Setup
 To set up and deploy this solution, follow these steps:
 
-
-### Installation
-1. Clone this repository:
+1. **Clone this repository:**
     ```bash
     git clone https://github.com/Lashmanbala/aws_glue_etl.git
     ```
-2. Configure your AWS environment and IAM roles.
+2. **Configure your AWS:**
 
-3. Upload any necessary datasets to the specified S3 bucket.
+   Configure your AWS credentials on your host machine to authenticate with AWS.
+   
+   And create a .env file like sample.env file with your values
 
-4. Add Glue job scripts to the AWS Glue Console or initiate them with the Glue CLI.
+3. **Create Lambda Function:**
 
-## ETL Jobs
-This repository includes the following ETL jobs:
-1. **Data Extraction Job**: Reads data from a specified source (e.g., S3).
-2. **Data Transformation Job**: Processes and transforms the extracted data.
-3. **Data Load Job**: Writes the transformed data to a destination (e.g., Redshift or RDS).
+   Create a lambda function in the aws console using the zipfile in the ghactivity downloader directory. And set the envronment variables in the lambda funtion.
 
-Each job uses PySpark scripts, optimized for processing large datasets.
+   Run the lambda funtion to capture the raw data in s3
 
-## Usage
-To execute the ETL jobs:
-1. Navigate to the AWS Glue Console.
-2. Select the desired job and start it, or use the CLI:
+5. **Install Required Packages:**
     ```bash
-    aws glue start-job-run --job-name <job_name>
-    ```
-
-3. Monitor the job progress in the Glue Console.
-
-### Scheduling
-You can schedule jobs by setting up triggers in AWS Glue or using AWS CloudWatch Events for automation.
-
-## Troubleshooting
-If a job fails, check the following:
-- **Job Logs**: Available in AWS CloudWatch.
-- **Data Catalog**: Ensure tables and metadata are correctly defined.
-- **IAM Permissions**: Confirm that the Glue service has access to necessary resources.
-
-## Contributing
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -am 'Add feature'`).
-4. Push the branch (`git push origin feature-name`).
-5. Create a pull request.
-
+   cd aws_glue
+   pip3 install -t requirements.txt
+   ```
+6. **Run The Script to deploy the app:**
+   ```bash
+   cd aws_glue
+   python3 app.py
+   ```  
+7. **Run the script for Athena queries:**
+   ```bash
+   cd aws_glue
+   python3 validate.py
+   ```
+   
 ## Contact
-For questions, please reach out to the repository owner or open an issue.
+For any questions, issues, or suggestions, please feel free to contact the project maintainer:
 
----
+GitHub: [Lashmanbala](https://github.com/Lashmanbala)
 
-**Lashmanbala**
+LinkedIn: [Lashmanbala](https://www.linkedin.com/in/lashmanbala/)
