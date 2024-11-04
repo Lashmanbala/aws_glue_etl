@@ -1,23 +1,20 @@
 # AWS Glue ETL
 
 ## Overview
-AWS Glue ETL is a serverless data integration service that simplifies the creation, operation, and scaling of data processing pipelines. 
-This repository includes Glue scripts, configurations, and workflows to process and transform data for analytics.
+- In this project, we extract the data from the web archive using aws lambda and store it in s3. 
+- Using glue, the raw data is processed(cleaned, partitioned, converted to parquet) and stored it in s3.
+- Using athena the cleand data is being queried.
 
 ## Architecture
-The solution leverages AWS Glue for data extraction, transformation, and loading with additional AWS services:
 - **S3** for data storage
 - **AWS Glue Data Catalog** for metadata management
-- **Amazon Redshift** or **Amazon RDS** for data warehousing
+- **Glue ETL** for data processing
+- **AWS Athena** for querying
 - **IAM** for security and access management
 
 ## Setup
 To set up and deploy this solution, follow these steps:
 
-### Prerequisites
-- AWS account
-- AWS CLI installed and configured
-- Access to the AWS Glue service
 
 ### Installation
 1. Clone this repository:
