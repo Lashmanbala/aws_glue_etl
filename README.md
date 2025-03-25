@@ -16,11 +16,7 @@ The requirement is to capture the data every hour  in s3 and process and store i
 - Using athena the cleand data is being queried.
 
 ## Architecture
-- **S3** for data storage
-- **AWS Glue Data Catalog** for metadata management
-- **Glue ETL** for data processing
-- **AWS Athena** for querying
-- **IAM** for security and access management
+![Alt text](architecture_2.png)
 
 ## Setup
 To set up and deploy this solution, follow these steps:
