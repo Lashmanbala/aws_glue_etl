@@ -1,11 +1,11 @@
 # AWS Glue ETL
 
 ## Overview
-The user activity in github is being recorded and stored in an archive called GH Archive. The archive is being updated every hour with last 1 hour user activity data as csv file. 
+The user activity in github is being recorded and stored in an archive called GH Archive. The archive is being updated every hour with last 1 hour user activity data as json file. 
  
 The requirement is to capture the data every hour  in s3 and process and store it in s3 in an optimzed way.
 
-- In this project, we extract the data from the web archive using aws lambda and store it in s3. 
+- In this project, I extracted the data from the web archive using aws lambda and store it in s3 and the lambda function is being triggered by eventbridge every hour. 
 - A glue workflow is created with:
   
    1. On-demand trigger which triggers the glue job.
