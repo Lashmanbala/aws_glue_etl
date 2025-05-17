@@ -35,19 +35,21 @@ To set up and deploy this solution, follow these steps:
 
    Create a lambda function in the aws console using the zipfile in the ghactivity downloader directory. And set the envronment variables in the lambda funtion.
 
-   Run the lambda funtion to capture the raw data in s3
+4. **Create Eventbridge Rule:**
 
-5. **Install Required Packages:**
+   Create an eventbridge rule to trigger the lambda function every hour in order to capture the hourly data.
+
+6. **Install Required Packages:**
     ```bash
    cd aws_glue
    pip3 install -t requirements.txt
    ```
-6. **Run The Script to deploy the app:**
+7. **Run The Script to deploy the glue app:**
    ```bash
    cd aws_glue
    python3 app.py
    ```  
-7. **Run the script for Athena queries:**
+8. **Run the script for Athena queries:**
    ```bash
    cd aws_glue
    python3 validate.py
