@@ -22,9 +22,12 @@ tgt_bucket_name = args['TGT_BUCKET_NAME']
 tgt_folder_name = args['TGT_FOLDER_NAME']
 
 # Reading data from s3
-datasource_s3 = glueContext.create_dynamic_frame.from_options(format_options={"multiLine": "true"}, connection_type="s3", 
-                                                              format="json", connection_options={"paths": [f"s3://{src_bucket_name}/{src_folder_name}/"], 
-                                                                                                 "recurse": True}, transformation_ctx="datasource_s3")
+datasource_s3 = glueContext.create_dynamic_frame.from_options(format="json",
+                                                              format_options={"multiLine": "true"}, 
+                                                              connection_type="s3", 
+                                                              connection_options={"paths": [f"s3://{src_bucket_name}/{src_folder_name}/"], 
+                                                                                                 "recurse": True}, 
+                                                              transformation_ctx="datasource_s3")
 
 
 # Script generated for node Change Schema
@@ -63,10 +66,13 @@ df = ChangeSchema_datasource. \
 dyf = DynamicFrame.fromDF(dataframe=df, glue_ctx=glueContext, name="dyf")
 
 # writing partitioned data into s3 in Parquet format
-dyf_partitioned = glueContext.write_dynamic_frame.from_options(frame=dyf, connection_type="s3", format="glueparquet", 
+dyf_partitioned = glueContext.write_dynamic_frame.from_options(frame=dyf, 
+                                                               format="glueparquet",
+                                                               format_options={"compression": "snappy"},
+                                                               connection_type="s3",  
                                                                connection_options={"path": f"s3://{tgt_bucket_name}/{tgt_folder_name}/", 
                                                                                    "partitionKeys": ["year", "month", "day"]}, 
-                                                              format_options={"compression": "snappy"}, 
+                                                               
                                                               transformation_ctx="dyf_partitioned")
 
 
