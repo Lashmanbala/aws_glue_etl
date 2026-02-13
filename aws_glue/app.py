@@ -3,9 +3,9 @@ from glue_util import create_glue_crawler, start_glue_crawler, create_glue_job, 
 import dotenv
 
 def main():
-    bucket_name = 'github-activity-bucket'
+    bucket_name = 'github-activity-bucket-123'
 
-    policy_ARN = create_iam_policy(bucket_name)
+    policy_ARN = ['arn:aws:iam::aws:policy/AmazonS3FullAccess']
 
     res = create_iam_role(policy_ARN)
     role_ARN = res['Role']['Arn']
@@ -28,9 +28,7 @@ def main():
     print(res)
 
     crawler_NAME = 'gha_parquet_crawler'
-    s3_path = f's3://{bucket_name}/cleaned_parquet/'
-    db_name = 'gha_database'
-    prefix = 'gha_' 
+    s3_path = f's3://{bucket_name}/cleaned/'
 
     res = create_glue_crawler(crawler_NAME, role_ARN, db_name, s3_path, prefix)
     print(res)
@@ -45,9 +43,9 @@ def main():
     job_name = 'gha_glue_job3'
     workflow_name = 'gha_workflow'
     job_arguments = {
-        '--SRC_BUCKET_NAME': 'github-activity-bucket',
+        '--SRC_BUCKET_NAME': 'github-activity-bucket-123',
         '--SRC_FOLDER_NAME': 'landing',
-        '--TGT_BUCKET_NAME': 'github-activity-bucket',
+        '--TGT_BUCKET_NAME': 'github-activity-bucket-123',
         '--TGT_FOLDER_NAME': 'cleaned'
     }
 
